@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views.generic import TemplateView,FormView,CreateView,UpdateView
 from store.models import *
@@ -6,6 +7,7 @@ from django.views.decorators.http import require_POST
 from .models import Cart, CartItem, MyOrders, OrderItems
 from .forms import AddToCartForm
 from django.db.models import Q
+from django.views.decorators.cache import never_cache
 
 # Create your views here.
 
@@ -83,6 +85,7 @@ def add_to_cart(request, product_id):
     }
     return render(request, 'add_to_cart.html', context)
 
+@never_cache
 def checkout(request):
     cart_items = CartItem.objects.filter(cart__user=request.user).all()
     total = 0
@@ -95,6 +98,7 @@ def checkout(request):
     return render(request, "checkout.html", context)
 
 
+@never_cache
 def complete_checkout(request):
     cart_items = CartItem.objects.filter(cart__user=request.user)
     total = 0
@@ -110,6 +114,34 @@ def complete_checkout(request):
         
     cart_items.delete() 
     return redirect(myorders)
+
+import razorpay
+from django.conf import settings
+
+def createRazorpay(request):
+    client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+        
+    cart_items = CartItem.objects.filter(cart__user=request.user)
+    total = 0
+    for item in cart_items:
+        total += item.quantity * item.product.price
+        
+    razoramt = total * 100
+    
+    DATA = {
+        "amount": str(int(razoramt)),
+        "currency": "INR",
+        "receipt": "receipt#1",
+        "notes": {
+            "mode": "test",
+            }
+        }
+    
+    order = client.order.create(data=DATA)    
+    orderid = order['id']
+    
+    return JsonResponse({'status': 'success', 'message': 'order created', 'orderid': orderid})
+
 
 
 def myorders(request):

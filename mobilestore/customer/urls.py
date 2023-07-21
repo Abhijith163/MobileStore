@@ -13,6 +13,7 @@ urlpatterns = [
     path('add-to-cart/<int:product_id>/', add_to_cart, name='add_to_cart'),
     path('remove-item/<int:item_id>/', remove_item, name='remove_item'),
     path('checkout/', views.checkout, name='checkout'),
+    path('checkout/razorpay/create', views.createRazorpay, name='checkout'),
     path('checkout/complete_checkout/', views.complete_checkout, name='complete_checkout'),
     
 ]

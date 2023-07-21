@@ -131,3 +131,5 @@ AUTH_USER_MODEL="account.CustUser"
 
 
 
+RAZOR_KEY_ID = 'rzp_test_fe6M5mEjUNaThB'
+RAZOR_KEY_SECRET = 'JfpvPxLdL02NZv1Y3w0nDZnq'

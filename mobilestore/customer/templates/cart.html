@@ -39,9 +39,9 @@
             <td colspan="4">Total</td>
             <td>{{ total_price }}</td>
             <td>
-              <form action="{% url 'checkout' %}" method="POST">
+              <form action="/customer/checkout/" method="POST">
                 {% csrf_token %}
-                <button class="buy-btn" type="submit">Buy Now</button>
+                <button class="buy-btn" type="submit">Proceed to Checkout</button>
               </form>
             </td>
           </tr>
